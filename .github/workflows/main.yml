@@ -64,4 +64,4 @@ jobs:
           file: Dockerfile
           context: .
           push: true
-          tags: secrets.DOCKER_REPO_USERNAME/${{ env.image_repository_name }}:latest
+          tags: ${{ secrets.DOCKER_REPO_USERNAME }}/msapi:latest
