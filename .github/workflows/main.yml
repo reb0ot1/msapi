@@ -62,6 +62,6 @@ jobs:
         if: ${{ github.event.inputs.version == '' || github.event.inputs.version == 'latest' }}
         with:
           file: Dockerfile
-          context: .
+          context: ./WebApplicationTeamCity
           push: true
           tags: ${{ secrets.DOCKER_REPO_USERNAME }}/msapi:latest
