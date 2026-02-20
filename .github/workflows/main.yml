@@ -1,24 +1,67 @@
 name: Deploy 🚀
-
+permissions:
+  packages: write
+  contents: write
 on:
+  # Triggered on new GitHub Release
+  release:
+    types: [published]
+  # Triggered on every successful Build action
+  workflow_run:
+    workflows: ["Build"]
+    branches: [main,master]
+    types:
+      - completed
+  # Manual trigger for rollback to specific release or redeploy latest
   workflow_dispatch:
-  push:
-    branches:
-      - main
+    inputs:
+      version:
+        default: latest
+        description: Tag you want to release.
+        required: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  push_to_registry:
+    runs-on: ubuntu-22.04
+    if: ${{ github.event.workflow_run.conclusion != 'failure' }}
     steps:
-      - name: 🛠️ Checkout Repository
+      # Checkout latest or specific tag
+      - name: checkout
+        if: ${{ github.event.inputs.version == '' || github.event.inputs.version == 'latest' }}
         uses: actions/checkout@v4
-      - name: ⚙️ Setup .NET 9 SDK
-        uses: actions/setup-dotnet@v4
+      - name: checkout tag
+        if: ${{ github.event.inputs.version != '' && github.event.inputs.version != 'latest' }}
+        uses: actions/checkout@v4
         with:
-          dotnet-version: 9.x
-      - name: 📦 Restore Dependencies
-        run: dotnet restore ./WebApplicationTeamCity/WebApplicationTeamCity.csproj
-      - name: 🏗️ Build Project
-        run: dotnet build ./WebApplicationTeamCity/WebApplicationTeamCity.csproj --no-restore
-      # - name: ✅ Run Tests
-      #   run: dotnet test ./BookManager/BookManager.csproj --no-build --verbosity normal
+          ref: refs/tags/${‎{ github.event.inputs.version }‎}
+          
+      # Assign environment variables used in subsequent steps
+      - name: Env variable assignment
+        run: echo "image_repository_name=$(echo ${‎{ github.repository }‎} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+      # TAG_NAME defaults to 'latest' if not a release or manual deployment
+      - name: Assign version
+        run: |
+          echo "TAG_NAME=latest" >> $GITHUB_ENV
+          if [ "${‎{ github.event.release.tag_name }‎}" != "" ]; then
+            echo "TAG_NAME=${‎{ github.event.release.tag_name }‎}" >> $GITHUB_ENV
+          fi;
+          if [ "${‎{ github.event.inputs.version }‎}" != "" ]; then
+            echo "TAG_NAME=${‎{ github.event.inputs.version }‎}" >> $GITHUB_ENV
+          fi;
+      
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: hub.docker.com
+          username: ${‎{ secrets.DOCKER_REPO_USERNAME }‎}
+          password: ${‎{ secrets.DOCKER_REPO_PASSWORD }‎}
+      
+      # Build and push new docker image, skip for manual redeploy other than 'latest'
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v3
+        if: ${{ github.event.inputs.version == '' || github.event.inputs.version == 'latest' }}
+        with:
+          file: Dockerfile
+          context: .
+          push: true
+          tags: ghcr.io/secrets.DOCKER_REPO_USERNAME/${‎{ env.image_repository_name }‎}:${‎{ env.TAG_NAME }‎}
