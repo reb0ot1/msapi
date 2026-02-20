@@ -61,7 +61,7 @@ jobs:
         uses: docker/build-push-action@v3
         if: ${{ github.event.inputs.version == '' || github.event.inputs.version == 'latest' }}
         with:
-          file: Dockerfile
+          file: ./WebApplicationTeamCity/Dockerfile
           context: ./WebApplicationTeamCity
           push: true
           tags: ${{ secrets.DOCKER_REPO_USERNAME }}/msapi:latest
