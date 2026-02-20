@@ -64,4 +64,4 @@ jobs:
           file: Dockerfile
           context: .
           push: true
-          tags: ghcr.io/secrets.DOCKER_REPO_USERNAME/${‎{ env.image_repository_name }‎}:${‎{ env.TAG_NAME }‎}
+          tags: hub.docker.com/secrets.DOCKER_REPO_USERNAME/${‎{ env.image_repository_name }‎}:${‎{ env.TAG_NAME }‎}
