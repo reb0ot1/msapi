@@ -37,7 +37,7 @@ jobs:
           
       # Assign environment variables used in subsequent steps
       - name: Env variable assignment
-        run: echo "image_repository_name=$(echo ${‎{ github.repository }‎} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+        run: echo "image_repository_name=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
       # TAG_NAME defaults to 'latest' if not a release or manual deployment
       - name: Assign version
         run: |
