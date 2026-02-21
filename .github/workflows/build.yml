@@ -1,0 +1,30 @@
+name: Build
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v3
+        with:
+          file: ./WebApplicationTeamCity/Dockerfile
+          context: ./WebApplicationTeamCity
+          push: false
+          tags: msapi:latest
+
+      - name: Run tests (optional)
+        run: |
+          echo "Add your test commands here"
+          echo "Examples: npm test, pytest, dotnet test, etc."
