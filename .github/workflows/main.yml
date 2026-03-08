@@ -115,7 +115,7 @@ jobs:
           username: ${{ secrets.DEPLOY_USERNAME }}
           port: 22 
           key: ${{ secrets.VPS_SSH_KEY }}
-          source: "./WebApplicationTeamCity/docker-compose.yml,./.env"
+          source: "./WebApplicationTeamCity/docker-compose.prod.yml,./.env"
           target: "~/my-dotnet-app/${{ github.event.repository.name }}/"
       
       # - name: Run remote db migrations
@@ -150,5 +150,5 @@ jobs:
           script: |
             echo $APPTOKEN | docker login -u $USERNAME --password-stdin
             cd ~/my-dotnet-app/${{ github.event.repository.name }}
-            docker compose -f ./docker-compose.yml pull
-            docker compose -f ./docker-compose.yml up app -d
+            docker compose -f ./docker-compose.prod.yml pull
+            docker compose -f ./docker-compose.prod.yml up app -d
