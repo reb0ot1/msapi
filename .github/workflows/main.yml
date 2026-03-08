@@ -148,7 +148,6 @@ jobs:
           port: 22
           envs: APPTOKEN,USERNAME
           script: |
-            echo "$APPTOKEN" | docker login docker.io -u "$USERNAME" --password-stdin
             cd ~/my-dotnet-app/${{ github.event.repository.name }}
-            docker compose -f ./docker-compose.prod.yml pull
-            docker compose -f ./docker-compose.prod.yml up app -d
+            docker compose -f ./WebApplicationTeamCity/docker-compose.prod.yml pull
+            docker compose -f ./WebApplicationTeamCity/docker-compose.prod.yml up app -d
