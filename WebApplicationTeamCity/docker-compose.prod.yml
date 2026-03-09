@@ -23,7 +23,7 @@ services:
 networks:
   default:
     external: true
-    name: nginx
+    name: app-net
 
 volumes:
     app-mydb:
