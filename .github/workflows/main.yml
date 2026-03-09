@@ -104,7 +104,7 @@ jobs:
           echo "HOST_DOMAIN=${{ secrets.DEPLOY_HOST }}" >> ./WebApplicationTeamCity/.env
           echo "LETSENCRYPT_EMAIL=${{ secrets.LETSENCRYPT_EMAIL }}" >> ./WebApplicationTeamCity/.env
           echo "DOCKER_HUB_USER=${{ secrets.DOCKER_REPO_USERNAME }}" >> ./WebApplicationTeamCity/.env
-          echo "IMAGE_REPO=${{ github.repository }}" >> ./WebApplicationTeamCity/.env
+          echo "IMAGE_REPO=msapi" >> ./WebApplicationTeamCity/.env
           echo "RELEASE_VERSION=${{ env.TAG_NAME }}" >> ./WebApplicationTeamCity/.env
       
       # Copy docker-compose and .env files to target server
