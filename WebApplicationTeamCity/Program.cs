@@ -33,7 +33,7 @@ app.MapGet("/weatherforecast", () =>
 
 app.MapGet("/testendpoint", () =>
 {
-    return "Hit the test endpoing v2.";
+    return "Hit the test endpoing v3.";
 });
 
 app.Run();
