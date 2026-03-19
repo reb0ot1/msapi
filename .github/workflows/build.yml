@@ -19,8 +19,8 @@ jobs:
       - name: Build Docker image
         uses: docker/build-push-action@v3
         with:
-          file: ./WebApplicationTeamCity/Dockerfile
-          context: ./WebApplicationTeamCity
+          file: ./Dockerfile
+          context: ./
           push: false
           tags: msapi:latest
 
