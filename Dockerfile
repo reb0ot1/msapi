@@ -12,10 +12,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["WebApplicationTeamCity.csproj", "."]
-RUN dotnet restore "./WebApplicationTeamCity.csproj"
-COPY . .
-WORKDIR "/src/."
+COPY ["WebApplicationTeamCity/", "WebApplicationTeamCity/"]
+COPY ["WebApplicationTeamCity.Services/", "WebApplicationTeamCity.Services/"]
+RUN dotnet restore "./WebApplicationTeamCity/WebApplicationTeamCity.csproj"
+WORKDIR "/src/WebApplicationTeamCity"
 RUN dotnet build "./WebApplicationTeamCity.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage

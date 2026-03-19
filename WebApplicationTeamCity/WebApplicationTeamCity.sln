@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplicationTeamCity", "WebApplicationTeamCity.csproj", "{92E0CBA6-F944-4AF9-9503-FC5CFF12FA22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplicationTeamCity.Services", "..\WebApplicationTeamCity.Services\WebApplicationTeamCity.Services.csproj", "{397C55C0-7123-4C0D-A60D-E58E4A229932}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplicationTeamCity.Tests", "..\WebApplicationTeamCity.Tests\WebApplicationTeamCity.Tests.csproj", "{AC31F607-FC15-483F-8B62-4685680EC5A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +19,19 @@ Global
 		{92E0CBA6-F944-4AF9-9503-FC5CFF12FA22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92E0CBA6-F944-4AF9-9503-FC5CFF12FA22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92E0CBA6-F944-4AF9-9503-FC5CFF12FA22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{397C55C0-7123-4C0D-A60D-E58E4A229932}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{397C55C0-7123-4C0D-A60D-E58E4A229932}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{397C55C0-7123-4C0D-A60D-E58E4A229932}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{397C55C0-7123-4C0D-A60D-E58E4A229932}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC31F607-FC15-483F-8B62-4685680EC5A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC31F607-FC15-483F-8B62-4685680EC5A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC31F607-FC15-483F-8B62-4685680EC5A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC31F607-FC15-483F-8B62-4685680EC5A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3B973453-8467-45DD-B8A1-33EFEE616F17}
 	EndGlobalSection
 EndGlobal

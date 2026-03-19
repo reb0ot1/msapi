@@ -1,7 +1,10 @@
+using Microsoft.AspNetCore.Mvc;
+using WebApplicationTeamCity.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddScoped<TestService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,9 +34,9 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 });
 
-app.MapGet("/testendpoint", () =>
+app.MapGet("/testendpoint", ([FromServices] TestService service) =>
 {
-    return "Hit the test endpoing v3.";
+    return service.GetTestData();
 });
 
 app.Run();
