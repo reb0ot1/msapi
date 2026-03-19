@@ -24,7 +24,15 @@ jobs:
           push: false
           tags: msapi:latest
 
-      - name: Run tests (optional)
+      - name: Build and run tests
         run: |
-          echo "Add your test commands here"
-          echo "Examples: npm test, pytest, dotnet test, etc."
+          docker build -f Dockerfile.tests -t msapi-tests:latest .
+          mkdir -p testresults
+          docker run --rm -v ${{ github.workspace }}/testresults:/testresults msapi-tests:latest
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: testresults/
