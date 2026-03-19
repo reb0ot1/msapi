@@ -1,4 +1,5 @@
-﻿using WebApplicationTeamCity.Services;
+﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
+using WebApplicationTeamCity.Services;
 using Xunit.Sdk;
 
 namespace WebApplicationTeamCity.Tests
@@ -19,7 +20,7 @@ namespace WebApplicationTeamCity.Tests
 
     public class UnitTest1
     {
-        [CustomBeforeAfterTest] // Use the concrete attribute instead of the abstract one
+        //[CustomBeforeAfterTest] // Use the concrete attribute instead of the abstract one
         [Fact]
         public void Test1()
         {
@@ -28,6 +29,16 @@ namespace WebApplicationTeamCity.Tests
             var result = service.GetTestData();
 
             Assert.Equal("This is a test data from a test service", result);
+        }
+
+        [Fact]
+        public void Test2()
+        {
+            var service = new TestService();
+
+            var result = service.GetTestData();
+
+            Assert.Equal("This is a test data from a test service 2", result);
         }
     }
 }
