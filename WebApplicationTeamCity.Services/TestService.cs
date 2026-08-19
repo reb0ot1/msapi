@@ -4,7 +4,7 @@
     {
         public string GetTestData()
         {
-            return "This is a test data from a test service";
+            return "This is a test data from a test service 2.";
         }
     }
 }
