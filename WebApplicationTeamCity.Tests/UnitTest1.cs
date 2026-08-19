@@ -38,7 +38,7 @@ namespace WebApplicationTeamCity.Tests
 
             var result = service.GetTestData();
 
-            Assert.Equal("This is a test data from a test service 2", result);
+            Assert.Equal("This is a test data from a test service 2.", result);
         }
     }
 }
