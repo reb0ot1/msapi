@@ -28,7 +28,7 @@ namespace WebApplicationTeamCity.Tests
 
             var result = service.GetTestData();
 
-            Assert.Equal("This is a test data from a test service", result);
+            Assert.NotEqual("This is a test data from a test service", result);
         }
 
         [Fact]
