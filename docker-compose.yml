@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: msapi
+      POSTGRES_USER: msapi
+      POSTGRES_PASSWORD: msapi-dev-password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U msapi -d msapi"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+    volumes:
+      - msapi-postgres:/var/lib/postgresql/data
+
+volumes:
+  msapi-postgres:
