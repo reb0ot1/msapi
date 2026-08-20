@@ -6,6 +6,7 @@ WORKDIR /src
 # Copy the repository into the image (build context should be the repo root)
 COPY ["WebApplicationTeamCity.Tests/", "WebApplicationTeamCity.Tests/"]
 COPY ["WebApplicationTeamCity.Services/", "WebApplicationTeamCity.Services/"]
+COPY ["WebApplicationTeamCity/", "WebApplicationTeamCity/"]
 
 # Restore the test project (adjust the .csproj path if your test project file name differs)
 RUN dotnet restore "WebApplicationTeamCity.Tests/WebApplicationTeamCity.Tests.csproj"

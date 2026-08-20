@@ -1,11 +1,25 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebApplicationTeamCity.Data;
 using WebApplicationTeamCity.Services;
+using WebApplicationTeamCity.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<TestService>();
+
 var app = builder.Build();
+
+if (args.Contains("--migrate", StringComparer.OrdinalIgnoreCase))
+{
+    await using var migrationScope = app.Services.CreateAsyncScope();
+    var dbContext = migrationScope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await dbContext.Database.MigrateAsync();
+    return;
+}
 
 // Configure the HTTP request pipeline.
 
@@ -39,7 +53,11 @@ app.MapGet("/testendpoint", ([FromServices] TestService service) =>
     return service.GetTestData();
 });
 
+app.MapUsersEndpoints();
+
 app.Run();
+
+public partial class Program;
 
 internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {

@@ -1,24 +1,41 @@
 version: "3.9"
 services:
+    db:
+        image: postgres:16-alpine
+        restart: always
+        container_name: ${IMAGE_REPO}-db
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        volumes:
+            - app-postgres:/var/lib/postgresql/data
     app:
         image: ${DOCKER_HUB_USER}/${IMAGE_REPO}:${RELEASE_VERSION}
         restart: always
         container_name: ${IMAGE_REPO}-app
+        depends_on:
+            db:
+                condition: service_healthy
         environment:
             VIRTUAL_HOST: ${HOST_DOMAIN}
             LETSENCRYPT_HOST: ${HOST_DOMAIN}
             LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
-        volumes:
-            - app-mydb:/app/App_Data
-    # app-migration:
-    #     image: ghcr.io/${IMAGE_REPO}:${RELEASE_VERSION}
-    #     restart: "no"
-    #     container_name: ${IMAGE_REPO}-app-migration
-    #     profiles:
-    #         - migration
-    #     command: --AppTasks=migrate
-    #     volumes:
-    #         - app-mydb:/app/App_Data
+            ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+    app-migration:
+        image: ${DOCKER_HUB_USER}/${IMAGE_REPO}:${RELEASE_VERSION}
+        restart: "no"
+        depends_on:
+            db:
+                condition: service_healthy
+        environment:
+            ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+        command: ["dotnet", "WebApplicationTeamCity.dll", "--migrate"]
 
 networks:
   default:
@@ -26,4 +43,4 @@ networks:
     name: app-net
 
 volumes:
-    app-mydb:
+    app-postgres:
