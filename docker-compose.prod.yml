@@ -23,6 +23,10 @@ services:
             db:
                 condition: service_healthy
         environment:
+            Authentication__JwtKey: ${JWT_KEY}
+            Authentication__JwtIssuer: WebApplicationTeamCity
+            Authentication__JwtAudience: WebApplicationTeamCity.Client
+            Authentication__RegistrationSecretKey: ${REGISTRATION_SECRET_KEY}
             VIRTUAL_HOST: ${HOST_DOMAIN}
             LETSENCRYPT_HOST: ${HOST_DOMAIN}
             LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
@@ -34,6 +38,10 @@ services:
             db:
                 condition: service_healthy
         environment:
+            Authentication__JwtKey: ${JWT_KEY}
+            Authentication__JwtIssuer: WebApplicationTeamCity
+            Authentication__JwtAudience: WebApplicationTeamCity.Client
+            Authentication__RegistrationSecretKey: ${REGISTRATION_SECRET_KEY}
             ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
         command: ["dotnet", "WebApplicationTeamCity.dll", "--migrate"]
 

@@ -5,6 +5,11 @@ using Npgsql;
 using WebApplicationTeamCity.Contracts;
 using WebApplicationTeamCity.Data;
 using WebApplicationTeamCity.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using System.Security.Cryptography;
+using System.Text;
+using WebApplicationTeamCity.Auth;
 
 namespace WebApplicationTeamCity.Users;
 
@@ -13,7 +18,9 @@ public static class UsersEndpoints
     public static IEndpointRouteBuilder MapUsersEndpoints(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapPost("/users", CreateUserAsync);
-        endpoints.MapGet("/users", GetUsersAsync);
+        endpoints.MapGet("/users", GetUsersAsync).RequireAuthorization();
+        endpoints.MapDelete("/users/{id:guid}", DeleteUserAsync)
+            .RequireAuthorization(policy => policy.RequireRole(UserRoles.Admin));
         return endpoints;
     }
 
@@ -24,17 +31,29 @@ public static class UsersEndpoints
         var users = await dbContext.Users
             .AsNoTracking()
             .OrderBy(user => user.Id)
-            .Select(user => new UserResponse(user.Id, user.Email, user.FirstName, user.LastName))
+            .Select(user => new UserResponse(
+                user.Id, user.Email, user.FirstName, user.LastName, user.Role))
             .ToListAsync(cancellationToken);
 
         return TypedResults.Ok(users);
     }
 
-    private static async Task<Results<Created<UserResponse>, ValidationProblem, Conflict<ProblemDetails>>> CreateUserAsync(
+    private static async Task<Results<Created<UserResponse>, ValidationProblem, Conflict<ProblemDetails>, UnauthorizedHttpResult>> CreateUserAsync(
         CreateUserRequest request,
+        [FromHeader(Name = "X-Registration-Key")] string? registrationKey,
         AppDbContext dbContext,
+        IPasswordHasher<User> passwordHasher,
+        IOptions<AuthOptions> authOptions,
         CancellationToken cancellationToken)
     {
+        if (string.IsNullOrEmpty(registrationKey)
+            || !CryptographicOperations.FixedTimeEquals(
+                Encoding.UTF8.GetBytes(registrationKey),
+                Encoding.UTF8.GetBytes(authOptions.Value.RegistrationSecretKey)))
+        {
+            return TypedResults.Unauthorized();
+        }
+
         var errors = UserRegistrationValidator.Validate(request);
         if (errors.Count > 0)
         {
@@ -59,8 +78,11 @@ public static class UsersEndpoints
             Id = Guid.NewGuid(),
             Email = normalizedEmail,
             FirstName = request.FirstName!.Trim(),
-            LastName = request.LastName!.Trim()
+            LastName = request.LastName!.Trim(),
+            PasswordHash = string.Empty,
+            Role = UserRoles.User
         };
+        user.PasswordHash = passwordHasher.HashPassword(user, request.Password!);
 
         dbContext.Users.Add(user);
 
@@ -81,9 +103,31 @@ public static class UsersEndpoints
             });
         }
 
-        var response = new UserResponse(user.Id, user.Email, user.FirstName, user.LastName);
+        var response = new UserResponse(
+            user.Id, user.Email, user.FirstName, user.LastName, user.Role);
         return TypedResults.Created($"/users/{user.Id}", response);
+    }
+
+    private static async Task<Results<NoContent, NotFound>> DeleteUserAsync(
+        Guid id,
+        AppDbContext dbContext,
+        CancellationToken cancellationToken)
+    {
+        var user = await dbContext.Users.SingleOrDefaultAsync(user => user.Id == id, cancellationToken);
+        if (user is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        dbContext.Users.Remove(user);
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return TypedResults.NoContent();
     }
 }
 
-public sealed record UserResponse(Guid Id, string Email, string FirstName, string LastName);
+public sealed record UserResponse(
+    Guid Id,
+    string Email,
+    string FirstName,
+    string LastName,
+    string Role);
