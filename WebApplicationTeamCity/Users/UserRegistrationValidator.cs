@@ -23,6 +23,7 @@ public static class UserRegistrationValidator
 
         ValidateName(request.FirstName, "firstName", errors);
         ValidateName(request.LastName, "lastName", errors);
+        ValidatePassword(request.Password, errors);
 
         return errors;
     }
@@ -39,6 +40,20 @@ public static class UserRegistrationValidator
         else if (value.Trim().Length > 100)
         {
             errors[fieldName] = [$"{fieldName} must be 100 characters or fewer."];
+        }
+    }
+
+    private static void ValidatePassword(
+        string? password,
+        IDictionary<string, string[]> errors)
+    {
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            errors["password"] = ["Password is required."];
+        }
+        else if (password.Length < 8)
+        {
+            errors["password"] = ["Password must be at least 8 characters long."];
         }
     }
 }

@@ -15,5 +15,39 @@ services:
     volumes:
       - msapi-postgres:/var/lib/postgresql/data
 
+  app-migration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      Authentication__JwtKey: ${JWT_KEY:-local-compose-jwt-key-that-is-at-least-32-characters}
+      Authentication__JwtIssuer: WebApplicationTeamCity
+      Authentication__JwtAudience: WebApplicationTeamCity.Client
+      Authentication__RegistrationSecretKey: ${REGISTRATION_SECRET_KEY:-local-compose-registration-key}
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=msapi;Username=msapi;Password=msapi-dev-password
+    command: ["dotnet", "WebApplicationTeamCity.dll", "--migrate"]
+    restart: "no"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      app-migration:
+        condition: service_completed_successfully
+    environment:
+      Authentication__JwtKey: ${JWT_KEY:-local-compose-jwt-key-that-is-at-least-32-characters}
+      Authentication__JwtIssuer: WebApplicationTeamCity
+      Authentication__JwtAudience: WebApplicationTeamCity.Client
+      Authentication__RegistrationSecretKey: ${REGISTRATION_SECRET_KEY:-local-compose-registration-key}
+      ASPNETCORE_HTTP_PORTS: 8080
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=msapi;Username=msapi;Password=msapi-dev-password
+    ports:
+      - "8080:8080"
+    restart: always
+
 volumes:
   msapi-postgres:

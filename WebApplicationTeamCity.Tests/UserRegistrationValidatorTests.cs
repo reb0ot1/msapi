@@ -9,7 +9,7 @@ public class UserRegistrationValidatorTests
     public void Validate_valid_request_returns_no_errors()
     {
         var errors = UserRegistrationValidator.Validate(
-            new CreateUserRequest("user@example.com", "Ada", "Lovelace"));
+            new CreateUserRequest("user@example.com", "Ada", "Lovelace", "password123"));
 
         Assert.Empty(errors);
     }
@@ -21,7 +21,7 @@ public class UserRegistrationValidatorTests
     public void Validate_invalid_email_returns_email_error(string? email)
     {
         var errors = UserRegistrationValidator.Validate(
-            new CreateUserRequest(email, "Ada", "Lovelace"));
+            new CreateUserRequest(email, "Ada", "Lovelace", "password123"));
 
         Assert.Contains("email", errors.Keys, StringComparer.OrdinalIgnoreCase);
     }
@@ -30,7 +30,7 @@ public class UserRegistrationValidatorTests
     public void Validate_missing_name_returns_name_errors()
     {
         var errors = UserRegistrationValidator.Validate(
-            new CreateUserRequest("user@example.com", " ", null));
+            new CreateUserRequest("user@example.com", " ", null, "password123"));
 
         Assert.Contains("firstName", errors.Keys, StringComparer.OrdinalIgnoreCase);
         Assert.Contains("lastName", errors.Keys, StringComparer.OrdinalIgnoreCase);
